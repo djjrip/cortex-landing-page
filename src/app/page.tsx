@@ -8,6 +8,34 @@ const InteractiveDemo = dynamic(() => import('@/components/InteractiveDemo'), { 
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [isSubscribing, setIsSubscribing] = useState(false);
+  const [subscribed, setSubscribed] = useState(false);
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    
+    try {
+      setIsSubscribing(true);
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      
+      if (res.ok) {
+        setSubscribed(true);
+        setEmail('');
+      } else {
+        alert('Failed to join waitlist. Please try again.');
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubscribing(false);
+    }
+  };
 
   const handleCheckout = async () => {
     try {
@@ -66,16 +94,47 @@ export default function Home() {
             Stop typing linear notes. Start mapping spatial thoughts. Drag and spin the universe behind you. Project Cortex physically structures your ideas in real-time using OpenAI.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 items-center pointer-events-auto">
+          <div className="flex flex-col gap-6 items-center pointer-events-auto w-full max-w-md">
             <button 
               onClick={handleCheckout}
               disabled={isLoading}
-              className="px-8 py-4 bg-white text-black font-bold tracking-wide rounded-lg hover:bg-emerald-400 hover:text-black hover:scale-105 transition-all duration-300 shadow-[0_0_40px_rgba(52,211,118,0.4)] disabled:opacity-50 disabled:hover:scale-100"
+              className="w-full px-8 py-4 bg-white text-black font-bold tracking-wide rounded-lg hover:bg-emerald-400 hover:text-black hover:scale-105 transition-all duration-300 shadow-[0_0_40px_rgba(52,211,118,0.4)] disabled:opacity-50 disabled:hover:scale-100"
             >
               {isLoading ? 'Loading Checkout...' : 'Buy Lifetime License — $149'}
             </button>
-            <p className="text-xs text-white/60 tracking-wide mt-4 sm:mt-0 sm:ml-4 drop-shadow-md bg-black/40 px-3 py-1 rounded-md backdrop-blur-sm">
-              Bring Your Own Key (BYOK)<br/>Zero Monthly Server Fees.
+            
+            <div className="relative flex items-center w-full my-2">
+              <div className="flex-grow border-t border-white/10"></div>
+              <span className="flex-shrink-0 mx-4 text-xs font-bold text-white/30 uppercase tracking-widest">Or</span>
+              <div className="flex-grow border-t border-white/10"></div>
+            </div>
+
+            {subscribed ? (
+              <div className="w-full py-3 px-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-lg text-sm font-medium">
+                ✓ You're on the waitlist. We'll email you.
+              </div>
+            ) : (
+              <form onSubmit={handleSubscribe} className="w-full flex gap-2">
+                <input 
+                  type="email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter email for free updates..." 
+                  required
+                  className="flex-grow px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-emerald-500/50 text-sm placeholder-white/30 transition-colors"
+                />
+                <button 
+                  type="submit"
+                  disabled={isSubscribing}
+                  className="px-6 py-3 bg-white/10 border border-white/10 rounded-lg text-sm font-bold hover:bg-white/20 transition-colors disabled:opacity-50"
+                >
+                  {isSubscribing ? '...' : 'Join'}
+                </button>
+              </form>
+            )}
+            
+            <p className="text-xs text-white/40 tracking-wide drop-shadow-md">
+              Bring Your Own Key (BYOK) • Zero Monthly Server Fees.
             </p>
           </div>
         </div>
