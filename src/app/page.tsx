@@ -1,6 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
+
+// Dynamically import the 3D graph so it only renders on the client (prevents Vercel SSR crash)
+const InteractiveDemo = dynamic(() => import('@/components/InteractiveDemo'), { ssr: false });
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
@@ -30,38 +34,39 @@ export default function Home() {
     <main className="min-h-screen bg-black text-white selection:bg-emerald-500/30">
       
       {/* Navigation */}
-      <nav className="w-full flex items-center justify-between p-6 absolute top-0 z-50">
-        <div className="font-black tracking-tighter text-xl">
+      <nav className="w-full flex items-center justify-between p-6 absolute top-0 z-50 pointer-events-none">
+        <div className="font-black tracking-tighter text-xl pointer-events-auto">
           PROJECT CORTEX
         </div>
-        <button onClick={handleCheckout} disabled={isLoading} className="text-xs font-bold uppercase tracking-widest text-white/50 hover:text-white transition-colors">
+        <button onClick={handleCheckout} disabled={isLoading} className="text-xs font-bold uppercase tracking-widest text-white/50 hover:text-white transition-colors pointer-events-auto">
           {isLoading ? 'Processing...' : 'Get Lifetime Access'}
         </button>
       </nav>
 
       {/* Hero Section */}
       <section className="relative w-full min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden">
-        {/* Background ambient glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-blue-500/20 rounded-full blur-[120px] pointer-events-none" />
+        
+        {/* Interactive WebGL Background */}
+        <InteractiveDemo />
 
-        <div className="z-10 max-w-4xl flex flex-col items-center">
-          <div className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md mb-8 text-xs font-medium tracking-widest uppercase text-emerald-400">
+        {/* Foreground Content - Note pointer-events-none so mouse clicks pass through to the graph, except on buttons */}
+        <div className="z-10 max-w-4xl flex flex-col items-center pointer-events-none">
+          <div className="px-4 py-1.5 rounded-full border border-white/10 bg-black/50 backdrop-blur-md mb-8 text-xs font-medium tracking-widest uppercase text-emerald-400">
             Now Available as a Native Desktop App
           </div>
           
-          <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.9] mb-8">
+          <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.9] mb-8 drop-shadow-2xl">
             THE AUTONOMOUS <br/>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-500">
               SECOND BRAIN.
             </span>
           </h1>
           
-          <p className="text-lg md:text-xl text-white/50 font-light max-w-2xl mb-12">
-            Stop typing linear notes. Start mapping spatial thoughts. Project Cortex is a WebGL-powered 3D Neural Network that physically structures your ideas in real-time using OpenAI.
+          <p className="text-lg md:text-xl text-white/70 font-light max-w-2xl mb-12 drop-shadow-md">
+            Stop typing linear notes. Start mapping spatial thoughts. Drag and spin the universe behind you. Project Cortex physically structures your ideas in real-time using OpenAI.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 items-center">
+          <div className="flex flex-col sm:flex-row gap-4 items-center pointer-events-auto">
             <button 
               onClick={handleCheckout}
               disabled={isLoading}
@@ -69,7 +74,7 @@ export default function Home() {
             >
               {isLoading ? 'Loading Checkout...' : 'Buy Lifetime License — $149'}
             </button>
-            <p className="text-xs text-white/40 tracking-wide mt-4 sm:mt-0 sm:ml-4">
+            <p className="text-xs text-white/60 tracking-wide mt-4 sm:mt-0 sm:ml-4 drop-shadow-md bg-black/40 px-3 py-1 rounded-md backdrop-blur-sm">
               Bring Your Own Key (BYOK)<br/>Zero Monthly Server Fees.
             </p>
           </div>
@@ -77,7 +82,7 @@ export default function Home() {
       </section>
 
       {/* Feature Grid */}
-      <section className="w-full py-32 px-6 border-t border-white/10 bg-gradient-to-b from-black to-zinc-950">
+      <section className="relative z-20 w-full py-32 px-6 border-t border-white/10 bg-gradient-to-b from-black to-zinc-950">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="p-8 rounded-2xl bg-white/5 border border-white/10">
             <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-500 mb-6 font-bold">1</div>
