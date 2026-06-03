@@ -3,17 +3,11 @@ import Stripe from 'stripe';
 import { Resend } from 'resend';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: '2025-02-24.acacia',
+  apiVersion: '2026-05-27.dahlia',
 });
 
 // We initialize Resend. If the key is missing in dev, we will safely mock it.
 const resend = new Resend(process.env.RESEND_API_KEY || 're_mock_key');
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
 
 export async function POST(req: Request) {
   const body = await req.text();
