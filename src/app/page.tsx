@@ -111,7 +111,7 @@ export default function Home() {
 
             {subscribed ? (
               <div className="w-full py-3 px-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-lg text-sm font-medium">
-                ✓ You're on the waitlist. We'll email you.
+                &#10003; You&apos;re on the waitlist. We&apos;ll email you.
               </div>
             ) : (
               <form onSubmit={handleSubscribe} className="w-full flex gap-2">
